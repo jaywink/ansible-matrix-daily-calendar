@@ -1,0 +1,62 @@
+---
+- name: Ensure user
+  user:
+    name: matrixdailycalendar
+    create_home: no
+    state: present
+  register: _user
+
+- name: Ensure path
+  file:
+    path: "/data/matrix-daily-calendar"
+    state: directory
+    owner: matrixdailycalendar
+    group: matrixdailycalendar
+
+- name: Template config
+  template:
+    src: calendar.cfg
+    dest: "/data/matrix-daily-calendar/calendar.cfg"
+    owner: matrixdailycalendar
+    group: matrixdailycalendar
+  register: _config
+
+- name: Copy python file
+  copy:
+    dest: "/data/matrix-daily-calendar/daily_calendar.py"
+    mode: "0755"
+    owner: matrixdailycalendar
+    group: matrixdailycalendar
+    src: daily_calendar.py
+
+- name: Ensure virtualenv installed
+  apt:
+    name: python3-virtualenv
+    state: present
+
+- name: Maintain python environment
+  pip:
+    name:
+      - "caldav~=0.8.0"
+      - "python-dateutil~=2.8.1"
+      - "icalendar~=4.0.7"
+    state: latest
+    virtualenv: "/data/matrix-daily-calendar/venv"
+    virtualenv_python: "python3"
+
+- name: Ensure crontab uses bash
+  cron:
+    name: SHELL
+    env: yes
+    job: /bin/bash
+    state: present
+    user: matrixdailycalendar
+
+- name: Maintain cron entry
+  cron:
+    name: Matrix Daily Calendar
+    hour: '6'
+    job: "cd /data/matrix-daily-calendar && source venv/bin/activate && python daily_calendar.py"
+    minute: '5'
+    state: present
+    user: matrixdailycalendar

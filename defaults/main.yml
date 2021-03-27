@@ -1,0 +1,22 @@
+---
+# Required, no defaults
+#matrix_daily_calendar_homeserver: https://matrix.domain.tld
+#matrix_daily_calendar_access_token: secret_token
+#matrix_daily_calendar_room: !foobar:domain.tld
+#matrix_daily_calendar_calendars:
+#  # Array of calendars, one at minimum required
+#  - name: My Calendar
+#    username: username
+#    password: password
+#    # URL to calendar
+#    url: https://domain.tld/caldav
+#    # OPTIONAL list of calendars, defaults to all
+#    #calendars:
+#    #  - https://domain.tld/caldar/cal1
+#    #  - https://domain.tld/caldar/cal2
+
+# Optional, defaults here
+matrix_daily_calendar_start: '0'
+
+# Optional, defaults to system default
+#matrix_daily_calendar_timezone:
